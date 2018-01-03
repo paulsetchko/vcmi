@@ -59,7 +59,7 @@ struct DLL_LINKAGE CObstacleInstance
 
 struct DLL_LINKAGE MoatObstacle : CObstacleInstance
 {
-	virtual std::vector<BattleHex> getAffectedTiles() const override; //for special effects (not blocking)
+	std::vector<BattleHex> getAffectedTiles() const override; //for special effects (not blocking)
 };
 
 struct DLL_LINKAGE SpellCreatedObstacle : CObstacleInstance
@@ -75,6 +75,8 @@ struct DLL_LINKAGE SpellCreatedObstacle : CObstacleInstance
 	bool trap;
 	bool removeOnTrigger;
 
+	bool revealed;
+
 	std::string appearAnimation;
 	std::string animation;
 
@@ -84,8 +86,8 @@ struct DLL_LINKAGE SpellCreatedObstacle : CObstacleInstance
 
 	SpellCreatedObstacle();
 
-	std::vector<BattleHex> getAffectedTiles() const override; //for special effects (not blocking)
-	bool visibleForSide(ui8 side, bool hasNativeStack) const override; //0 attacker
+	std::vector<BattleHex> getAffectedTiles() const override;
+	bool visibleForSide(ui8 side, bool hasNativeStack) const override;
 
 	bool blocksTiles() const override;
 	bool stopsMovement() const override;

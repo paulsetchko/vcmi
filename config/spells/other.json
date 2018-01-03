@@ -82,7 +82,7 @@
 					"damage":{
 						"type":"core:damage",
 						"optional":false,
-						"automatic":false,
+						"indirect":true,
 						"customEffectId" : 82
 					}
 				}
@@ -176,7 +176,7 @@
 						"defender" :{
 							"shape" : [[""], ["TL"], ["TL", "TR"]],
 							"animation" : "C15SPE7",
-							"appearAnimation" : "C15SPE6
+							"appearAnimation" : "C15SPE6"
 						}
 					}
 				}
@@ -224,7 +224,7 @@
 					"damage":{
 						"type":"core:damage",
 						"optional":false,
-						"automatic":false
+						"indirect":true
 					}
 				}
 			},
@@ -320,7 +320,7 @@
 				"targetModifier":{"smart":false},
 				"battleEffects":{
 					"dispel":{
-						"optional":true,
+						"optional":true
 					},
 					"removeObstacle":{
 						"optional":true,
@@ -395,7 +395,7 @@
 					},
 					"cure":{
 						"type":"core:dispel",
-						"automatic": false,
+						"indirect": true,
 						"optional":true,
 						"dispelNegative":true,
 						"dispelNeutral":false,
