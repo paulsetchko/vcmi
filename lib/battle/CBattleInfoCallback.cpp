@@ -850,9 +850,15 @@ TDmgRange CBattleInfoCallback::calculateDmgRange(const BattleAttackInfo & info) 
 	maxDmg *= additiveBonus * multBonus;
 
 	if(curseEffects->size()) //curse handling (rest)
+	{
 		minDmg += curseBlessAdditiveModifier;
+		maxDmg = minDmg;
+	}
 	else if(blessEffects->size()) //bless handling
+	{
 		maxDmg += curseBlessAdditiveModifier;
+		minDmg = maxDmg;
+	}
 
 	TDmgRange returnedVal = std::make_pair(int64_t(minDmg), int64_t(maxDmg));
 
