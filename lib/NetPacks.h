@@ -2569,9 +2569,6 @@ struct WelcomeClient : public CPregamePackToPropagate
 	int connectionId;
 	ServerCapabilities * capabilities;
 
-	DLL_LINKAGE WelcomeClient(){};
-	DLL_LINKAGE WelcomeClient(ServerCapabilities & cap, int id);
-
 	void apply(CSelectionScreen *selScreen);
 
 	template <typename Handler> void serialize(Handler &h, const int version)
