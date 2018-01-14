@@ -1578,9 +1578,11 @@ std::set<const battle::Unit *> CBattleInfoCallback::battleAdjacentUnits(const ba
 	std::set<const battle::Unit *> ret;
 	RETURN_IF_NOT_BATTLE(ret);
 
-	for (BattleHex hex : unit->getSurroundingHexes())
+	for(auto hex : unit->getSurroundingHexes())
+	{
 		if(auto neighbour = battleGetUnitByPos(hex, true))
 			ret.insert(neighbour);
+	}
 
 	return ret;
 }
