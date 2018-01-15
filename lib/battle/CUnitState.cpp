@@ -203,7 +203,7 @@ CShots & CShots::operator=(const CShots & other)
 
 bool CShots::isLimited() const
 {
-	return !env->unitHasAmmoCart() || !shooter.getHasBonus();
+	return !env->unitHasAmmoCart(owner) || !shooter.getHasBonus();
 }
 
 int32_t CShots::total() const
@@ -475,7 +475,7 @@ CUnitState::CUnitState(const IUnitInfo * unit_, const IBonusBearer * bonus_, con
 	waiting(false),
 	casts(this),
 	counterAttacks(this),
-	health(unit_),
+	health(this),
 	shots(this, env_),
 	totalAttacks(this, Selector::type(Bonus::ADDITIONAL_ATTACK), 1),
 	minDamage(this, Selector::typeSubtype(Bonus::CREATURE_DAMAGE, 0).Or(Selector::typeSubtype(Bonus::CREATURE_DAMAGE, 1)), 0),

@@ -15,7 +15,7 @@
 class HypotheticBattle;
 class CStack;
 
-class StackWithBonuses : public virtual IBonusBearer, public battle::IUnitInfo, public battle::IUnitEnvironment
+class StackWithBonuses : public virtual IBonusBearer, public battle::IUnitInfo
 {
 public:
 	battle::CUnitState state;
@@ -47,8 +47,6 @@ public:
 
 	int64_t getTreeVersion() const override;
 
-	bool unitHasAmmoCart() const override;
-
 	void addUnitBonus(const std::vector<Bonus> & bonus);
 	void updateUnitBonus(const std::vector<Bonus> & bonus);
 	void removeUnitBonus(const std::vector<Bonus> & bonus);
@@ -56,7 +54,6 @@ public:
 	void removeUnitBonus(const CSelector & selector);
 
 private:
-	const battle::IUnitInfo * origInfo;
 	const IBonusBearer * origBearer;
 	const HypotheticBattle * owner;
 
@@ -65,14 +62,18 @@ private:
 	uint32_t id;
 	ui8 side;
 	PlayerColor player;
+	SlotID slot;
 };
 
-class HypotheticBattle : public BattleProxy
+class HypotheticBattle : public BattleProxy, public battle::IUnitEnvironment
 {
 public:
 	std::map<uint32_t, std::shared_ptr<StackWithBonuses>> stackStates;
 
 	HypotheticBattle(Subject realBattle);
+
+	bool unitHasAmmoCart(const battle::Unit * unit) const override;
+	PlayerColor unitEffectiveOwner(const battle::Unit * unit) const override;
 
 	std::shared_ptr<StackWithBonuses> getForUpdate(uint32_t id);
 

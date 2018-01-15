@@ -24,27 +24,27 @@ void actualizeEffect(TBonusListPtr target, const Bonus & ef)
 }
 
 StackWithBonuses::StackWithBonuses(const HypotheticBattle * Owner, const CStack * Stack)
-	: state(Stack, this, this),
-	origInfo(Stack),
+	: state(this, this, Owner),
 	origBearer(Stack),
 	owner(Owner),
-	type(Stack->type),
-	baseAmount(Stack->baseAmount),
-	id(Stack->ID),
-	side(Stack->side),
-	player(Stack->owner)
+	type(Stack->creatureType()),
+	baseAmount(Stack->unitBaseAmount()),
+	id(Stack->unitId()),
+	side(Stack->unitSide()),
+	player(Stack->unitOwner()),
+	slot(Stack->unitSlot())
 {
 	state = Stack->stackState;
 }
 
 StackWithBonuses::StackWithBonuses(const HypotheticBattle * Owner, const battle::NewUnitInfo & info)
-	: state(this, this, this),
-	origInfo(nullptr),
+	: state(this, this, Owner),
 	origBearer(nullptr),
 	owner(Owner),
 	baseAmount(info.count),
 	id(info.id),
-	side(info.side)
+	side(info.side),
+	slot(SlotID::SUMMONED_SLOT_PLACEHOLDER)
 {
 	type = info.type.toCreature();
 	origBearer = type;
@@ -91,10 +91,7 @@ PlayerColor StackWithBonuses::unitOwner() const
 
 SlotID StackWithBonuses::unitSlot() const
 {
-	if(origInfo)
-		return origInfo->unitSlot();
-	else
-		return SlotID::SUMMONED_SLOT_PLACEHOLDER;
+	return slot;
 }
 
 const TBonusListPtr StackWithBonuses::getAllBonuses(const CSelector & selector, const CSelector & limit,
@@ -138,13 +135,6 @@ const TBonusListPtr StackWithBonuses::getAllBonuses(const CSelector & selector, 
 int64_t StackWithBonuses::getTreeVersion() const
 {
 	return owner->getTreeVersion();
-}
-
-
-bool StackWithBonuses::unitHasAmmoCart() const
-{
-	//FIXME: check ammocart alive state here
-	return false;
 }
 
 void StackWithBonuses::addUnitBonus(const std::vector<Bonus> & bonus)
@@ -201,6 +191,17 @@ HypotheticBattle::HypotheticBattle(Subject realBattle)
 	activeUnitId = activeUnit ? activeUnit->unitId() : -1;
 
 	nextId = 0xF0000000;
+}
+
+bool HypotheticBattle::unitHasAmmoCart(const battle::Unit * unit) const
+{
+	//FIXME: check ammocart alive state here
+	return false;
+}
+
+PlayerColor HypotheticBattle::unitEffectiveOwner(const battle::Unit * unit) const
+{
+	return battleGetOwner(unit);
 }
 
 std::shared_ptr<StackWithBonuses> HypotheticBattle::getForUpdate(uint32_t id)

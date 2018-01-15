@@ -280,7 +280,6 @@ public:
 
 	void onRemoved();
 
-
 private:
 	const IUnitInfo * unit;
 	const IBonusBearer * bonus;

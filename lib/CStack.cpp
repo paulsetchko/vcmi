@@ -348,7 +348,7 @@ int CStack::getEffectValue(const spells::Mode mode, const spells::Spell * spell)
 
 const PlayerColor CStack::getOwner() const
 {
-	return battle->battleGetOwner(this);
+	return unitEffectiveOwner(this);
 }
 
 void CStack::getCasterName(MetaString & text) const
@@ -418,19 +418,24 @@ int32_t CStack::unitBaseAmount() const
 	return baseAmount;
 }
 
-bool CStack::unitHasAmmoCart() const
+bool CStack::unitHasAmmoCart(const battle::Unit * unit) const
 {
 	bool hasAmmoCart = false;
 
 	for(const CStack * st : battle->stacks)
 	{
-		if(battle->battleMatchOwner(st, this, true) && st->getCreature()->idNumber == CreatureID::AMMO_CART && st->alive())
+		if(battle->battleMatchOwner(st, unit, true) && st->getCreature()->idNumber == CreatureID::AMMO_CART && st->alive())
 		{
 			hasAmmoCart = true;
 			break;
 		}
 	}
 	return hasAmmoCart;
+}
+
+PlayerColor CStack::unitEffectiveOwner(const battle::Unit * unit) const
+{
+	return battle->battleGetOwner(unit);
 }
 
 uint32_t CStack::unitId() const

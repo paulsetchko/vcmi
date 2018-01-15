@@ -17,10 +17,14 @@ class CCreature;
 namespace battle
 {
 
+class Unit;
+
 class DLL_LINKAGE IUnitEnvironment
 {
 public:
-	virtual bool unitHasAmmoCart() const = 0; //todo: handle ammo cart with bonus system
+	virtual bool unitHasAmmoCart(const Unit * unit) const = 0; //todo: handle ammo cart with bonus system
+
+	virtual PlayerColor unitEffectiveOwner(const Unit * unit) const = 0;
 };
 
 class DLL_LINKAGE IUnitHealthInfo

@@ -57,7 +57,7 @@ public:
 		EXPECT_CALL(infoMock, creatureType()).WillRepeatedly(Return(pikeman));
 		EXPECT_CALL(infoMock, unitMaxHealth()).WillRepeatedly(Return(pikeman->MaxHealth()));
 
-		EXPECT_CALL(envMock, unitHasAmmoCart()).WillRepeatedly(Return(hasAmmoCart));
+		EXPECT_CALL(envMock, unitHasAmmoCart(_)).WillRepeatedly(Return(hasAmmoCart));
 	}
 
 	void makeShooter(int32_t ammo)

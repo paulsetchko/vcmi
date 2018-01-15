@@ -99,7 +99,8 @@ public:
 	int32_t unitMaxHealth() const override;
 	int32_t unitBaseAmount() const override;
 
-	bool unitHasAmmoCart() const override;
+	bool unitHasAmmoCart(const battle::Unit * unit) const override;
+	PlayerColor unitEffectiveOwner(const battle::Unit * unit) const override;
 
 	uint32_t unitId() const override;
 	ui8 unitSide() const override;
