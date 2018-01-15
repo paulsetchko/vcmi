@@ -18,6 +18,8 @@
 static const int32_t DEFAULT_AMOUNT = 100;
 static const int32_t DEFAULT_SPEED = 10;
 static const BattleHex DEFAULT_POSITION = BattleHex(5, 5);
+static const int DEFAULT_ATTACK = 58;
+static const int DEFAULT_DEFENCE = 63;
 
 class UnitStateTest : public testing::Test
 {
@@ -44,6 +46,9 @@ public:
 		using namespace testing;
 
 		bonusMock.addNewBonus(std::make_shared<Bonus>(Bonus::PERMANENT, Bonus::STACKS_SPEED, Bonus::CREATURE_ABILITY, DEFAULT_SPEED, 0));
+
+		bonusMock.addNewBonus(std::make_shared<Bonus>(Bonus::PERMANENT, Bonus::PRIMARY_SKILL, Bonus::CREATURE_ABILITY, DEFAULT_ATTACK, 0, PrimarySkill::ATTACK));
+		bonusMock.addNewBonus(std::make_shared<Bonus>(Bonus::PERMANENT, Bonus::PRIMARY_SKILL, Bonus::CREATURE_ABILITY, DEFAULT_DEFENCE, 0, PrimarySkill::DEFENSE));
 
 		EXPECT_CALL(infoMock, unitBaseAmount()).WillRepeatedly(Return(DEFAULT_AMOUNT));
 		EXPECT_CALL(infoMock, creatureType()).WillRepeatedly(Return(pikeman));
@@ -158,4 +163,80 @@ TEST_F(UnitStateTest, canShootWithAmmoCart)
 
 	EXPECT_TRUE(subject.canShoot());
 	EXPECT_TRUE(subject.isShooter());
+}
+
+TEST_F(UnitStateTest, getAttack)
+{
+	setRegularUnitExpectations();
+//	initUnit();
+
+	EXPECT_EQ(subject.getAttack(false), DEFAULT_ATTACK);
+	EXPECT_EQ(subject.getAttack(true), DEFAULT_ATTACK);
+}
+
+TEST_F(UnitStateTest, getDefence)
+{
+	setRegularUnitExpectations();
+//	initUnit();
+
+	EXPECT_EQ(subject.getDefence(false), DEFAULT_DEFENCE);
+	EXPECT_EQ(subject.getDefence(true), DEFAULT_DEFENCE);
+}
+
+TEST_F(UnitStateTest, attackWithFrenzy)
+{
+	setRegularUnitExpectations();
+
+	bonusMock.addNewBonus(std::make_shared<Bonus>(Bonus::PERMANENT, Bonus::IN_FRENZY, Bonus::SPELL_EFFECT, 50, 0));
+
+//	initUnit();
+
+	int expectedAttack = DEFAULT_ATTACK + 0.5 * DEFAULT_DEFENCE;
+
+	EXPECT_EQ(subject.getAttack(false), expectedAttack);
+	EXPECT_EQ(subject.getAttack(true), expectedAttack);
+}
+
+TEST_F(UnitStateTest, defenceWithFrenzy)
+{
+	setRegularUnitExpectations();
+
+	bonusMock.addNewBonus(std::make_shared<Bonus>(Bonus::PERMANENT, Bonus::IN_FRENZY, Bonus::SPELL_EFFECT, 50, 0));
+
+//	initUnit();
+
+	int expectedDefence = 0;
+
+	EXPECT_EQ(subject.getDefence(false), expectedDefence);
+	EXPECT_EQ(subject.getDefence(true), expectedDefence);
+}
+
+TEST_F(UnitStateTest, additionalMeleeAttack)
+{
+	setRegularUnitExpectations();
+
+	{
+		auto bonus = std::make_shared<Bonus>(Bonus::PERMANENT, Bonus::ADDITIONAL_ATTACK, Bonus::SPELL_EFFECT, 5, 0);
+		bonus->effectRange = Bonus::ONLY_MELEE_FIGHT;
+
+		bonusMock.addNewBonus(bonus);
+	}
+
+	EXPECT_EQ(subject.totalAttacks.getMeleeValue(), 6);
+	EXPECT_EQ(subject.totalAttacks.getRangedValue(), 1);
+}
+
+TEST_F(UnitStateTest, additionalRangedAttack)
+{
+	setRegularUnitExpectations();
+
+	{
+		auto bonus = std::make_shared<Bonus>(Bonus::PERMANENT, Bonus::ADDITIONAL_ATTACK, Bonus::SPELL_EFFECT, 5, 0);
+		bonus->effectRange = Bonus::ONLY_DISTANCE_FIGHT;
+
+		bonusMock.addNewBonus(bonus);
+	}
+
+	EXPECT_EQ(subject.totalAttacks.getMeleeValue(), 1);
+	EXPECT_EQ(subject.totalAttacks.getRangedValue(), 6);
 }
