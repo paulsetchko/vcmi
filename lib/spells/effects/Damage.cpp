@@ -189,5 +189,5 @@ void Damage::prepareEffects(StacksInjured & stacksInjured, RNG & rng, const Mech
 		describeEffect(stacksInjured.battleLog, m, firstTarget, killed, damageToDisplay, multiple);
 }
 
-} // namespace effects
-} // namespace spells
+}
+}

@@ -306,5 +306,5 @@ void UnitEffect::serializeJsonEffect(JsonSerializeFormat & handler)
 }
 
 
-} // namespace effects
-} // namespace spells
+}
+}

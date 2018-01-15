@@ -41,5 +41,5 @@ private:
 	void prepareEffects(StacksInjured & stacksInjured, RNG & rng, const Mechanics * m, const EffectTarget & target, bool describe) const;
 };
 
-} // namespace effects
-} // namespace spells
+}
+}

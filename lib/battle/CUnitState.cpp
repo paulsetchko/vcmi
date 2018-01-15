@@ -948,4 +948,4 @@ void CUnitState::onRemoved()
 	ghost = true;
 }
 
-} // namespace battle
+}

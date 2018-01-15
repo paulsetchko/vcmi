@@ -56,5 +56,5 @@ private:
 	EffectTarget transformTargetByChain(const Mechanics * m, const Target & aimPoint, const Target & spellTarget) const;
 };
 
-} // namespace effects
-} // namespace spells
+}
+}
