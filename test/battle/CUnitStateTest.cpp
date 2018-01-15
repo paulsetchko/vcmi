@@ -15,6 +15,7 @@
 #include "../../lib/battle/CUnitState.h"
 #include "../../lib/CCreatureHandler.h"
 
+static const int32_t DEFAULT_HP = 123;
 static const int32_t DEFAULT_AMOUNT = 100;
 static const int32_t DEFAULT_SPEED = 10;
 static const BattleHex DEFAULT_POSITION = BattleHex(5, 5);
@@ -30,7 +31,7 @@ public:
 
 	const CCreature * pikeman;
 
-	battle::CUnitState subject;
+	battle::CUnitStateDetached subject;
 
 	bool hasAmmoCart;
 
@@ -38,7 +39,7 @@ public:
 		:infoMock(),
 		envMock(),
 		bonusMock(),
-		subject(&infoMock, &bonusMock, &envMock),
+		subject(&infoMock, &bonusMock),
 		hasAmmoCart(false)
 	{
 		pikeman = CreatureID(0).toCreature();
@@ -47,7 +48,7 @@ public:
 	void setDefaultExpectations()
 	{
 		using namespace testing;
-
+		bonusMock.addNewBonus(std::make_shared<Bonus>(Bonus::PERMANENT, Bonus::STACK_HEALTH, Bonus::CREATURE_ABILITY, DEFAULT_HP, 0));
 		bonusMock.addNewBonus(std::make_shared<Bonus>(Bonus::PERMANENT, Bonus::STACKS_SPEED, Bonus::CREATURE_ABILITY, DEFAULT_SPEED, 0));
 
 		bonusMock.addNewBonus(std::make_shared<Bonus>(Bonus::PERMANENT, Bonus::PRIMARY_SKILL, Bonus::CREATURE_ABILITY, DEFAULT_ATTACK, 0, PrimarySkill::ATTACK));
@@ -68,7 +69,7 @@ public:
 
 	void initUnit()
 	{
-		subject.localInit();
+		subject.localInit(&envMock);
 		subject.position = DEFAULT_POSITION;
 	}
 };
@@ -95,9 +96,9 @@ TEST_F(UnitStateTest, initialRegular)
 	EXPECT_FALSE(subject.isShooter());
 
 	EXPECT_EQ(subject.getCount(), DEFAULT_AMOUNT);
-	EXPECT_EQ(subject.getFirstHPleft(), pikeman->MaxHealth());
+	EXPECT_EQ(subject.getFirstHPleft(), DEFAULT_HP);
 	EXPECT_EQ(subject.getKilled(), 0);
-	EXPECT_EQ(subject.getAvailableHealth(), pikeman->MaxHealth() * DEFAULT_AMOUNT);
+	EXPECT_EQ(subject.getAvailableHealth(), DEFAULT_HP * DEFAULT_AMOUNT);
 	EXPECT_EQ(subject.getTotalHealth(), subject.getAvailableHealth());
 
 	EXPECT_EQ(subject.getPosition(), DEFAULT_POSITION);

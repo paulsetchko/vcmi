@@ -307,7 +307,7 @@ TEST_F(CGameStateTest, battleResurrection)
 
 	int64_t damage = unit->unitMaxHealth() + 1;
 
-	unit->stackState.damage(damage);
+	unit->damage(damage);
 
 	EXPECT_EQ(unit->getCount(), 9);
 
@@ -325,6 +325,6 @@ TEST_F(CGameStateTest, battleResurrection)
 		cast.cast(this);
 	}
 
-	EXPECT_EQ(unit->stackState.health.getCount(), 10);
-	EXPECT_EQ(unit->stackState.health.getResurrected(), 0);
+	EXPECT_EQ(unit->health.getCount(), 10);
+	EXPECT_EQ(unit->health.getResurrected(), 0);
 }

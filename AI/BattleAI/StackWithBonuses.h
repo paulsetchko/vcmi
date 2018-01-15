@@ -15,10 +15,9 @@
 class HypotheticBattle;
 class CStack;
 
-class StackWithBonuses : public virtual IBonusBearer, public battle::IUnitInfo
+class StackWithBonuses : public battle::CUnitState, public virtual IBonusBearer
 {
 public:
-	battle::CUnitState state;
 
 	std::vector<Bonus> bonusesToAdd;
 	std::vector<Bonus> bonusesToUpdate;
@@ -29,6 +28,8 @@ public:
 	StackWithBonuses(const HypotheticBattle * Owner, const battle::NewUnitInfo & info);
 
 	virtual ~StackWithBonuses();
+
+	StackWithBonuses & operator= (const battle::CUnitState & other);
 
 	///IUnitInfo
 	const CCreature * creatureType() const override;

@@ -94,11 +94,13 @@ protected:
 class DLL_LINKAGE CShots : public CAmmo
 {
 public:
-	explicit CShots(const battle::Unit * Owner, const IUnitEnvironment * Env);
+	explicit CShots(const battle::Unit * Owner);
 	CShots(const CShots & other);
 	CShots & operator=(const CShots & other);
 	bool isLimited() const override;
 	int32_t total() const override;
+
+	void setEnv(const IUnitEnvironment * env_);
 private:
 	const IUnitEnvironment * env;
 
@@ -196,7 +198,8 @@ public:
 	///position on battlefield; -2 - keep, -3 - lower tower, -4 - upper tower
 	BattleHex position;
 
-	explicit CUnitState(const IUnitInfo * unit_, const IBonusBearer * bonus_, const IUnitEnvironment * env_);
+	CUnitState();
+
 	CUnitState(const CUnitState & other) = delete;
 	CUnitState(CUnitState && other) = delete;
 
@@ -232,43 +235,26 @@ public:
 	bool willMove(int turn = 0) const override;
 	bool waited(int turn = 0) const override;
 
-	uint32_t unitId() const override;
-	ui8 unitSide() const override;
-
-	const CCreature * creatureType() const override;
-	PlayerColor unitOwner() const override;
-
-	SlotID unitSlot() const override;
-
 	int32_t unitMaxHealth() const override;
-	int32_t unitBaseAmount() const override;
 
 	std::shared_ptr<CUnitState> asquire() const override;
 
 	int battleQueuePhase(int turn) const override;
 
-
 	void damage(int64_t & amount);
 	void heal(int64_t & amount, EHealLevel level, EHealPower power);
 
-	void localInit();
+	void localInit(const IUnitEnvironment * env_);
 	void serializeJson(JsonSerializeFormat & handler);
 
 	void toInfo(UnitChanges & info);
 	void fromInfo(const UnitChanges & info);
-
-	const IUnitInfo * getUnitInfo() const;
 
 	int getMinDamage(bool ranged) const override;
 	int getMaxDamage(bool ranged) const override;
 
 	int getAttack(bool ranged) const override;
 	int getDefence(bool ranged) const override;
-
-	const TBonusListPtr getAllBonuses(const CSelector & selector, const CSelector & limit,
-		const CBonusSystemNode * root = nullptr, const std::string & cachingStr = "") const override;
-
-	int64_t getTreeVersion() const override;
 
 	void afterAttack(bool ranged, bool counter);
 
@@ -281,8 +267,6 @@ public:
 	void onRemoved();
 
 private:
-	const IUnitInfo * unit;
-	const IBonusBearer * bonus;
 	const IUnitEnvironment * env;
 
 	CTotalsProxy attack;
@@ -292,6 +276,34 @@ private:
 	CCheckProxy cloneLifetimeMarker;
 
 	void reset();
+};
+
+class DLL_LINKAGE CUnitStateDetached : public CUnitState
+{
+public:
+	explicit CUnitStateDetached(const IUnitInfo * unit_, const IBonusBearer * bonus_);
+
+	const TBonusListPtr getAllBonuses(const CSelector & selector, const CSelector & limit,
+		const CBonusSystemNode * root = nullptr, const std::string & cachingStr = "") const override;
+
+	int64_t getTreeVersion() const override;
+
+	CUnitStateDetached & operator= (const CUnitState & other);
+
+	uint32_t unitId() const override;
+	ui8 unitSide() const override;
+
+	const CCreature * creatureType() const override;
+	PlayerColor unitOwner() const override;
+
+	SlotID unitSlot() const override;
+
+
+	int32_t unitBaseAmount() const override;
+
+private:
+	const IUnitInfo * unit;
+	const IBonusBearer * bonus;
 };
 
 }
