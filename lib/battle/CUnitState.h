@@ -134,7 +134,7 @@ private:
 class DLL_LINKAGE CHealth
 {
 public:
-	explicit CHealth(const IUnitHealthInfo * Owner);
+	explicit CHealth(const IUnitInfo * Owner);
 	CHealth(const CHealth & other);
 
 	CHealth & operator=(const CHealth & other);
@@ -158,7 +158,7 @@ public:
 private:
 	void addResurrected(int32_t amount);
 	void setFromTotal(const int64_t totalHealth);
-	const IUnitHealthInfo * owner;
+	const IUnitInfo * owner;
 
 	int32_t firstHPleft;
 	int32_t fullUnits;
@@ -197,7 +197,7 @@ public:
 	BattleHex position;
 
 	explicit CUnitState(const IUnitInfo * unit_, const IBonusBearer * bonus_, const IUnitEnvironment * env_);
-	CUnitState(const CUnitState & other);
+	CUnitState(const CUnitState & other) = delete;
 	CUnitState(CUnitState && other) = delete;
 
 	CUnitState & operator= (const CUnitState & other);

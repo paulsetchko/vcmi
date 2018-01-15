@@ -287,7 +287,7 @@ void CRetaliations::serializeJson(JsonSerializeFormat & handler)
 }
 
 ///CHealth
-CHealth::CHealth(const IUnitHealthInfo * Owner):
+CHealth::CHealth(const IUnitInfo * Owner):
 	owner(Owner)
 {
 	reset();
@@ -486,38 +486,6 @@ CUnitState::CUnitState(const IUnitInfo * unit_, const IBonusBearer * bonus_, con
 	cloneLifetimeMarker(this, Selector::type(Bonus::NONE).And(Selector::source(Bonus::SPELL_EFFECT, SpellID::CLONE))),
 	cloneID(-1),
 	position()
-{
-
-}
-
-CUnitState::CUnitState(const CUnitState & other)
-	: unit(other.unit),
-	bonus(other.bonus),
-	env(other.env),
-	cloned(other.cloned),
-	defending(other.defending),
-	defendingAnim(other.defendingAnim),
-	drainedMana(other.drainedMana),
-	fear(other.fear),
-	hadMorale(other.hadMorale),
-	ghost(other.ghost),
-	ghostPending(other.ghostPending),
-	movedThisRound(other.movedThisRound),
-	summoned(other.summoned),
-	waiting(other.waiting),
-	casts(other.casts),
-	counterAttacks(other.counterAttacks),
-	health(other.health),
-	shots(other.shots),
-	totalAttacks(other.totalAttacks),
-	minDamage(other.minDamage),
-	maxDamage(other.maxDamage),
-	attack(other.attack),
-	defence(other.defence),
-	inFrenzy(other.inFrenzy),
-	cloneLifetimeMarker(other.cloneLifetimeMarker),
-	cloneID(other.cloneID),
-	position(other.position)
 {
 
 }
@@ -772,7 +740,9 @@ int CUnitState::getDefence(bool ranged) const
 
 std::shared_ptr<CUnitState> CUnitState::asquire() const
 {
-	return std::make_shared<CUnitState>(*this);
+	auto ret = std::make_shared<CUnitState>(this->unit, this->bonus, this->env);
+	*ret = *this;
+	return ret;
 }
 
 void CUnitState::serializeJson(JsonSerializeFormat & handler)

@@ -27,17 +27,13 @@ public:
 	virtual PlayerColor unitEffectiveOwner(const Unit * unit) const = 0;
 };
 
-class DLL_LINKAGE IUnitHealthInfo
-{
-public:
-	virtual int32_t unitMaxHealth() const = 0;
-	virtual int32_t unitBaseAmount() const = 0;
-};
-
-class DLL_LINKAGE IUnitInfo : public IUnitHealthInfo
+class DLL_LINKAGE IUnitInfo
 {
 public:
 	bool doubleWide() const;
+
+	virtual int32_t unitMaxHealth() const = 0;
+	virtual int32_t unitBaseAmount() const = 0;
 
 	virtual uint32_t unitId() const = 0;
 	virtual ui8 unitSide() const = 0;
