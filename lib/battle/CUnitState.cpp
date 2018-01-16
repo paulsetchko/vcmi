@@ -523,7 +523,7 @@ CUnitState & CUnitState::operator=(const CUnitState & other)
 	return *this;
 }
 
-ui8 CUnitState::getSpellSchoolLevel(const spells::Mode mode, const spells::Spell * spell, int * outSelectedSchool) const
+ui8 CUnitState::getSpellSchoolLevel(const spells::Spell * spell, int * outSelectedSchool) const
 {
 	int skill = valOfBonuses(Selector::typeSubtype(Bonus::SPELLCASTER, spell->getIndex()));
 	vstd::abetween(skill, 0, 3);
@@ -541,17 +541,17 @@ int64_t CUnitState::getSpecificSpellBonus(const spells::Spell * spell, int64_t b
 	return base;
 }
 
-int CUnitState::getEffectLevel(const spells::Mode mode, const spells::Spell * spell) const
+int CUnitState::getEffectLevel(const spells::Spell * spell) const
 {
-	return getSpellSchoolLevel(mode, spell);
+	return getSpellSchoolLevel(spell);
 }
 
-int CUnitState::getEffectPower(const spells::Mode mode, const spells::Spell * spell) const
+int CUnitState::getEffectPower(const spells::Spell * spell) const
 {
 	return valOfBonuses(Bonus::CREATURE_SPELL_POWER) * getCount() / 100;
 }
 
-int CUnitState::getEnchantPower(const spells::Mode mode, const spells::Spell * spell) const
+int CUnitState::getEnchantPower(const spells::Spell * spell) const
 {
 	int res = valOfBonuses(Bonus::CREATURE_ENCHANT_POWER);
 	if(res <= 0)
@@ -559,7 +559,7 @@ int CUnitState::getEnchantPower(const spells::Mode mode, const spells::Spell * s
 	return res;
 }
 
-int CUnitState::getEffectValue(const spells::Mode mode, const spells::Spell * spell) const
+int CUnitState::getEffectValue(const spells::Spell * spell) const
 {
 	return valOfBonuses(Bonus::SPECIFIC_SPELL_POWER, spell->getIndex()) * getCount();
 }
@@ -588,37 +588,17 @@ void CUnitState::getCastDescription(const spells::Spell * spell, const std::vect
 	getCastDescription(spell, text);
 }
 
-void CUnitState::spendMana(const spells::Mode mode, const spells::Spell * spell, const spells::PacketSender * server, const int spellCost) const
+void CUnitState::spendMana(const spells::PacketSender * server, const int spellCost) const
 {
-	if(mode == spells::Mode::CREATURE_ACTIVE || mode == spells::Mode::ENCHANTER)
-	{
-		if(spellCost != 1)
-			logGlobal->warn("Unexpected spell cost for creature %d", spellCost);
+	if(spellCost != 1)
+		logGlobal->warn("Unexpected spell cost %d for creature", spellCost);
 
-		BattleSetStackProperty ssp;
-		ssp.stackID = unitId();
-		ssp.which = BattleSetStackProperty::CASTS;
-		ssp.val = -spellCost;
-		ssp.absolute = false;
-		server->sendAndApply(&ssp);
-
-		if(mode == spells::Mode::ENCHANTER)
-		{
-			auto bl = getBonuses(Selector::typeSubtype(Bonus::ENCHANTER, spell->getIndex()));
-
-			int cooldown = 1;
-			for(auto b : *(bl))
-				if(b->additionalInfo > cooldown)
-					cooldown = b->additionalInfo;
-
-			BattleSetStackProperty ssp;
-			ssp.which = BattleSetStackProperty::ENCHANTER_COUNTER;
-			ssp.absolute = false;
-			ssp.val = cooldown;
-			ssp.stackID = unitId();
-			server->sendAndApply(&ssp);
-		}
-	}
+	BattleSetStackProperty ssp;
+	ssp.stackID = unitId();
+	ssp.which = BattleSetStackProperty::CASTS;
+	ssp.val = -spellCost;
+	ssp.absolute = false;
+	server->sendAndApply(&ssp);
 }
 
 bool CUnitState::ableToRetaliate() const
