@@ -588,19 +588,6 @@ void CUnitState::getCastDescription(const spells::Spell * spell, const std::vect
 	getCastDescription(spell, text);
 }
 
-void CUnitState::spendMana(const spells::PacketSender * server, const int spellCost) const
-{
-	if(spellCost != 1)
-		logGlobal->warn("Unexpected spell cost %d for creature", spellCost);
-
-	BattleSetStackProperty ssp;
-	ssp.stackID = unitId();
-	ssp.which = BattleSetStackProperty::CASTS;
-	ssp.val = -spellCost;
-	ssp.absolute = false;
-	server->sendAndApply(&ssp);
-}
-
 bool CUnitState::ableToRetaliate() const
 {
 	return alive()
@@ -1006,10 +993,20 @@ SlotID CUnitStateDetached::unitSlot() const
 	return unit->unitSlot();
 }
 
-
 int32_t CUnitStateDetached::unitBaseAmount() const
 {
 	return unit->unitBaseAmount();
+}
+
+void CUnitStateDetached::spendMana(const spells::PacketSender * server, const int spellCost) const
+{
+	if(spellCost != 1)
+		logGlobal->warn("Unexpected spell cost %d for creature", spellCost);
+
+	//this is evil, but
+	//use of netpacks in detached state is an error
+	//non const API is more evil for hero
+	const_cast<CUnitStateDetached *>(this)->casts.use(spellCost);
 }
 
 }

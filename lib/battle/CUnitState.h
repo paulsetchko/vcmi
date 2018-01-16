@@ -220,7 +220,6 @@ public:
 	void getCasterName(MetaString & text) const override;
 	void getCastDescription(const spells::Spell * spell, MetaString & text) const override;
 	void getCastDescription(const spells::Spell * spell, const std::vector<const Unit *> & attacked, MetaString & text) const override;
-	void spendMana(const spells::PacketSender * server, const int spellCost) const override;
 
 	bool ableToRetaliate() const override;
 	bool alive() const override;
@@ -316,6 +315,8 @@ public:
 
 
 	int32_t unitBaseAmount() const override;
+
+	void spendMana(const spells::PacketSender * server, const int spellCost) const override;
 
 private:
 	const IUnitInfo * unit;
