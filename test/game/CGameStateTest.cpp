@@ -318,7 +318,7 @@ TEST_F(CGameStateTest, battleResurrection)
 		spells::BattleCast cast(gameState->curB, attacker, spells::Mode::HERO, spell);
 		cast.aimToUnit(unit);
 
-		EXPECT_FALSE(spell->canBeCast(gameState->curB, spells::Mode::HERO, attacker));
+		EXPECT_TRUE(spell->canBeCast(gameState->curB, spells::Mode::HERO, attacker));
 
 		EXPECT_TRUE(spell->canBeCastAt(gameState->curB, spells::Mode::HERO, attacker, unit->getPosition()));
 
