@@ -40,6 +40,7 @@ struct StartInfo;
 struct ServerCapabilities;
 class CMapGenOptions;
 struct ClientPlayer;
+class CVCMIServer;
 
 struct CPackForClient : public CPack
 {
@@ -2397,21 +2398,29 @@ struct CenterView : public CPackForClient
 
 /***********************************************************************************************************/
 
-struct CPackForSelectionScreen : public CPack
+struct CPackForLobby : public CPack
 {
+	CConnection * c; // MPTODO: should be only present in cpacks to server
 	void apply(CSelectionScreen *selScreen) {}
+
+	bool applyServerBefore(CVCMIServer * srv, CConnection * c)
+	{
+		return false;
+	}
+
+	void applyServerAfter(CVCMIServer * srv, CConnection * c) {}
 };
 
-class CPregamePackToPropagate  : public CPackForSelectionScreen
+class CLobbyPackToPropagate  : public CPackForLobby
 {};
 
-class CPregamePackToHost  : public CPackForSelectionScreen
+class CLobbyPackToHost  : public CPackForLobby
 {};
 
-class CPregamePackToServer  : public CPackForSelectionScreen
+class CLobbyPackToServer  : public CPackForLobby
 {};
 
-struct ChatMessage : public CPregamePackToPropagate
+struct ChatMessage : public CLobbyPackToPropagate
 {
 	std::string playerName, message;
 
@@ -2424,9 +2433,11 @@ struct ChatMessage : public CPregamePackToPropagate
 	}
 };
 
-struct QuitMenuWithoutStarting : public CPregamePackToPropagate
+struct QuitMenuWithoutStarting : public CLobbyPackToPropagate
 {
 	void apply(CSelectionScreen *selScreen);
+	bool applyServerBefore(CVCMIServer * srv, CConnection * c);
+	void applyServerAfter(CVCMIServer * srv, CConnection * c);
 
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
@@ -2434,12 +2445,13 @@ struct QuitMenuWithoutStarting : public CPregamePackToPropagate
 	}
 };
 
-struct PlayerJoined : public CPregamePackToHost
+struct PlayerJoined : public CLobbyPackToHost
 {
 	std::map<ui8, ClientPlayer> players;
 	ui8 connectionID;
 
 	void apply(CSelectionScreen *selScreen);
+
 
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
@@ -2448,7 +2460,7 @@ struct PlayerJoined : public CPregamePackToHost
 	}
 };
 
-struct SelectMap : public CPregamePackToPropagate
+struct SelectMap : public CLobbyPackToPropagate
 {
 	CMapInfo *mapInfo;
 	CMapGenOptions * mapGenOpts;
@@ -2456,6 +2468,7 @@ struct SelectMap : public CPregamePackToPropagate
 	SelectMap() : mapInfo(nullptr), mapGenOpts(nullptr) {}
 
 	void apply(CSelectionScreen *selScreen);
+	bool applyServerBefore(CVCMIServer * srv, CConnection * c);
 
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
@@ -2465,13 +2478,15 @@ struct SelectMap : public CPregamePackToPropagate
 
 };
 
-struct UpdateStartOptions : public CPregamePackToPropagate
+struct UpdateStartOptions : public CLobbyPackToPropagate
 {
 	StartInfo * si;
 
 	void apply(CSelectionScreen *selScreen);
+	bool applyServerBefore(CVCMIServer * srv, CConnection * c);
 
 	UpdateStartOptions() : si(nullptr) {}
+
 
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
@@ -2480,11 +2495,12 @@ struct UpdateStartOptions : public CPregamePackToPropagate
 
 };
 
-struct PassHost : public CPregamePackToPropagate
+struct PassHost : public CLobbyPackToPropagate
 {
 	int toConnection;
 
 	void apply(CSelectionScreen *selScreen);
+	bool applyServerBefore(CVCMIServer * srv, CConnection * c);
 
 	PassHost() : toConnection(-1) {}
 
@@ -2494,12 +2510,13 @@ struct PassHost : public CPregamePackToPropagate
 	}
 };
 
-struct PregameGuiAction : public CPregamePackToPropagate
+struct PregameGuiAction : public CLobbyPackToPropagate
 {
 	enum {NO_TAB, OPEN_OPTIONS, OPEN_SCENARIO_LIST, OPEN_RANDOM_MAP_OPTIONS}
 		action;
 
 	void apply(CSelectionScreen *selScreen);
+
 
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
@@ -2507,7 +2524,7 @@ struct PregameGuiAction : public CPregamePackToPropagate
 	}
 };
 
-struct RequestOptionsChange : public CPregamePackToHost
+struct RequestOptionsChange : public CLobbyPackToHost
 {
 	enum EWhat {TOWN, HERO, BONUS};
 	ui8 what;
@@ -2523,6 +2540,7 @@ struct RequestOptionsChange : public CPregamePackToHost
 
 	void apply(CSelectionScreen *selScreen);
 
+
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
 		h & what;
@@ -2531,11 +2549,12 @@ struct RequestOptionsChange : public CPregamePackToHost
 	}
 };
 
-struct PlayerLeft : public CPregamePackToPropagate
+struct PlayerLeft : public CLobbyPackToPropagate
 {
 	ui8 connectionID;
 
 	void apply(CSelectionScreen *selScreen);
+
 
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
@@ -2543,11 +2562,12 @@ struct PlayerLeft : public CPregamePackToPropagate
 	}
 };
 
-struct PlayersNames : public CPregamePackToPropagate
+struct PlayersNames : public CLobbyPackToPropagate
 {
 	std::map<ui8, ClientPlayer> playerNames;
 
 	void apply(CSelectionScreen *selScreen);
+
 
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
@@ -2555,9 +2575,11 @@ struct PlayersNames : public CPregamePackToPropagate
 	}
 };
 
-struct StartWithCurrentSettings : public CPregamePackToPropagate
+struct StartWithCurrentSettings : public CLobbyPackToPropagate
 {
 	void apply(CSelectionScreen *selScreen);
+	bool applyServerBefore(CVCMIServer * srv, CConnection * c);
+	void applyServerAfter(CVCMIServer * srv, CConnection * c);
 
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
@@ -2565,7 +2587,7 @@ struct StartWithCurrentSettings : public CPregamePackToPropagate
 	}
 };
 
-struct WelcomeClient : public CPregamePackToPropagate
+struct WelcomeClient : public CLobbyPackToPropagate
 {
 	int connectionId;
 	bool giveHost;
@@ -2577,6 +2599,7 @@ struct WelcomeClient : public CPregamePackToPropagate
 
 	void apply(CSelectionScreen *selScreen);
 
+
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
 		h & connectionId;
@@ -2585,7 +2608,7 @@ struct WelcomeClient : public CPregamePackToPropagate
 	}
 };
 
-struct WelcomeServer : public CPregamePackToServer
+struct WelcomeServer : public CLobbyPackToServer
 {
 	std::string uuid;
 	std::vector<std::string> names;
@@ -2593,6 +2616,8 @@ struct WelcomeServer : public CPregamePackToServer
 	WelcomeServer(){};
 	WelcomeServer(std::string & UUID, std::vector<std::string> Names)
 		: uuid(UUID), names(Names) {}
+
+	bool applyServerBefore(CVCMIServer * srv, CConnection * c);
 
 	template <typename Handler> void serialize(Handler & h, const int version)
 	{
