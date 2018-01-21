@@ -2459,7 +2459,7 @@ struct PlayerJoined : public CLobbyPackToHost
 
 struct SelectMap : public CLobbyPackToPropagate
 {
-	CMapInfo *mapInfo;
+	CMapInfo * mapInfo;
 	CMapGenOptions * mapGenOpts;
 
 	SelectMap() : mapInfo(nullptr), mapGenOpts(nullptr) {}
@@ -2477,19 +2477,16 @@ struct SelectMap : public CLobbyPackToPropagate
 
 struct UpdateStartOptions : public CLobbyPackToPropagate
 {
-	StartInfo * si;
+	StartInfo * startInfo;
 
 	void apply(CSelectionScreen *selScreen);
-	bool applyServerBefore(CVCMIServer * srv, CConnection * c);
 
-	UpdateStartOptions() : si(nullptr) {}
-
+	UpdateStartOptions() : startInfo(nullptr) {}
 
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
-		h & si;
+		h & startInfo;
 	}
-
 };
 
 struct PassHost : public CLobbyPackToPropagate
