@@ -31,7 +31,7 @@ class CGameHandler;
 class CConnection;
 class CCampaignState;
 class CArtifact;
-class CSelectionScreen;
+class CLobbyScreen;
 class CGObjectInstance;
 class CArtifactInstance;
 struct StackLocation;
@@ -2403,7 +2403,7 @@ struct CenterView : public CPackForClient
 struct CPackForLobby : public CPack
 {
 	CConnection * c; // MPTODO: should be only present in cpacks to server
-	void apply(CSelectionScreen *selScreen) {}
+	void apply(CLobbyScreen * lobby) {}
 
 	bool applyServerBefore(CVCMIServer * srv, CConnection * c)
 	{
@@ -2426,7 +2426,7 @@ struct ChatMessage : public CLobbyPackToPropagate
 {
 	std::string playerName, message;
 
-	void apply(CSelectionScreen *selScreen);
+	void apply(CLobbyScreen * lobby);
 
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
@@ -2437,7 +2437,7 @@ struct ChatMessage : public CLobbyPackToPropagate
 
 struct QuitMenuWithoutStarting : public CLobbyPackToPropagate
 {
-	void apply(CSelectionScreen *selScreen);
+	void apply(CLobbyScreen * lobby);
 	bool applyServerBefore(CVCMIServer * srv, CConnection * c);
 	void applyServerAfter(CVCMIServer * srv, CConnection * c);
 
@@ -2451,7 +2451,7 @@ struct PlayerJoined : public CLobbyPackToHost
 {
 	ui8 connectionID;
 
-	void apply(CSelectionScreen *selScreen);
+	void apply(CLobbyScreen * lobby);
 
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
@@ -2466,7 +2466,7 @@ struct SelectMap : public CLobbyPackToPropagate
 
 	SelectMap() : mapInfo(nullptr), mapGenOpts(nullptr) {}
 
-	void apply(CSelectionScreen *selScreen);
+	void apply(CLobbyScreen * lobby);
 	bool applyServerBefore(CVCMIServer * srv, CConnection * c);
 
 	template <typename Handler> void serialize(Handler &h, const int version)
@@ -2481,7 +2481,7 @@ struct UpdateStartOptions : public CLobbyPackToPropagate
 {
 	StartInfo * startInfo;
 
-	void apply(CSelectionScreen *selScreen);
+	void apply(CLobbyScreen * lobby);
 
 	UpdateStartOptions() : startInfo(nullptr) {}
 
@@ -2495,7 +2495,7 @@ struct PassHost : public CLobbyPackToPropagate
 {
 	int toConnection;
 
-	void apply(CSelectionScreen *selScreen);
+	void apply(CLobbyScreen * lobby);
 	bool applyServerBefore(CVCMIServer * srv, CConnection * c);
 
 	PassHost() : toConnection(-1) {}
@@ -2511,7 +2511,7 @@ struct PregameGuiAction : public CLobbyPackToPropagate
 	enum {NO_TAB, OPEN_OPTIONS, OPEN_SCENARIO_LIST, OPEN_RANDOM_MAP_OPTIONS}
 		action;
 
-	void apply(CSelectionScreen *selScreen);
+	void apply(CLobbyScreen * lobby);
 
 
 	template <typename Handler> void serialize(Handler &h, const int version)
@@ -2544,7 +2544,7 @@ struct PlayerLeft : public CLobbyPackToPropagate
 {
 	ui8 connectionID;
 
-	void apply(CSelectionScreen *selScreen);
+	void apply(CLobbyScreen * lobby);
 
 
 	template <typename Handler> void serialize(Handler &h, const int version)
@@ -2557,7 +2557,7 @@ struct PlayersNames : public CLobbyPackToPropagate
 {
 	std::map<ui8, ClientPlayer> playerNames;
 
-	void apply(CSelectionScreen *selScreen);
+	void apply(CLobbyScreen * lobby);
 
 
 	template <typename Handler> void serialize(Handler &h, const int version)
@@ -2568,7 +2568,7 @@ struct PlayersNames : public CLobbyPackToPropagate
 
 struct StartWithCurrentSettings : public CLobbyPackToPropagate
 {
-	void apply(CSelectionScreen *selScreen);
+	void apply(CLobbyScreen * lobby);
 	bool applyServerBefore(CVCMIServer * srv, CConnection * c);
 	void applyServerAfter(CVCMIServer * srv, CConnection * c);
 
@@ -2588,7 +2588,7 @@ struct WelcomeClient : public CLobbyPackToPropagate
 		: connectionId(-1), giveHost(false), capabilities(nullptr)
 	{}
 
-	void apply(CSelectionScreen *selScreen);
+	void apply(CLobbyScreen * lobby);
 
 
 	template <typename Handler> void serialize(Handler &h, const int version)
