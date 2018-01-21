@@ -2581,11 +2581,11 @@ struct StartWithCurrentSettings : public CLobbyPackToPropagate
 struct WelcomeClient : public CLobbyPackToPropagate
 {
 	int connectionId;
-	bool giveHost;
+	int hostConnectionId;
 	ServerCapabilities * capabilities;
 
 	WelcomeClient()
-		: connectionId(-1), giveHost(false), capabilities(nullptr)
+		: connectionId(-1), hostConnectionId(-1), capabilities(nullptr)
 	{}
 
 	void apply(CLobbyScreen * lobby);
@@ -2594,7 +2594,7 @@ struct WelcomeClient : public CLobbyPackToPropagate
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
 		h & connectionId;
-		h & giveHost;
+		h & hostConnectionId;
 		h & capabilities;
 	}
 };

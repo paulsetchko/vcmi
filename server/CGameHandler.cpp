@@ -1801,7 +1801,7 @@ void CGameHandler::newTurn()
 
 	synchronizeArtifactHandlerLists(); //new day events may have changed them. TODO better of managing that
 }
-void CGameHandler::run(bool resume)
+void CGameHandler::run(bool resume, CVCMIServer * srv)
 {
 	LOG_TRACE_PARAMS(logGlobal, "resume=%d", resume);
 
@@ -1813,9 +1813,7 @@ void CGameHandler::run(bool resume)
 			(*cc) << *gs->initialOpts; // gs->scenarioOps
 		}
 
-		std::set<PlayerColor> players;
-		(*cc) >> players; //how many players will be handled at that client
-
+		auto players = srv->getAllClientPlayers(cc->connectionID);
 		std::stringstream sbuffer;
 		sbuffer << "Connection " << cc->connectionID << " will handle " << players.size() << " player: ";
 		for (PlayerColor color : players)
