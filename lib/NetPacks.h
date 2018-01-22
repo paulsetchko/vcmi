@@ -2428,6 +2428,7 @@ struct CLobbyPackToPropagate : public CPackForLobby
 struct CLobbyPackToServer : public CPackForLobby
 {
 	bool checkClientPermissions(CVCMIServer * srv) const;
+	void applyServerAfter(CVCMIServer * srv);
 };
 
 struct LobbyClientConnected : public CLobbyPackToPropagate
