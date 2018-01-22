@@ -255,7 +255,7 @@ bool QueryReply::applyGh( CGameHandler *gh )
 	auto playerToConnection = gh->connections.find(player);
 	if(playerToConnection == gh->connections.end())
 		COMPLAIN_AND_RETURN("No such player!");
-	if(playerToConnection->second != c)
+	if(!vstd::contains(playerToConnection->second, c))
 		COMPLAIN_AND_RETURN("Message came from wrong connection!");
 	if(qid == QueryID(-1))
 		COMPLAIN_AND_RETURN("Cannot answer the query with id -1!");
@@ -274,10 +274,10 @@ bool MakeAction::applyGh( CGameHandler *gh )
 		if(ba.actionType != Battle::WALK  &&  ba.actionType != Battle::END_TACTIC_PHASE
 			&& ba.actionType != Battle::RETREAT && ba.actionType != Battle::SURRENDER)
 			ERROR_AND_RETURN;
-		if(gh->connections[b->sides[b->tacticsSide].color] != c)
+		if(!vstd::contains(gh->connections[b->sides[b->tacticsSide].color], c))
 			ERROR_AND_RETURN;
 	}
-	else if(gh->connections[b->battleGetStackByID(b->activeStack)->owner] != c)
+	else if(!vstd::contains(gh->connections[b->battleGetStackByID(b->activeStack)->owner], c))
 		ERROR_AND_RETURN;
 
 	return gh->makeBattleAction(ba);
@@ -290,7 +290,7 @@ bool MakeCustomAction::applyGh( CGameHandler *gh )
 	if(b->tacticDistance) ERROR_AND_RETURN;
 	const CStack *active = GS(gh)->curB->battleGetStackByID(GS(gh)->curB->activeStack);
 	if(!active) ERROR_AND_RETURN;
-	if(gh->connections[active->owner] != c) ERROR_AND_RETURN;
+	if(!vstd::contains(gh->connections[active->owner], c)) ERROR_AND_RETURN;
 	if(ba.actionType != Battle::HERO_SPELL) ERROR_AND_RETURN;
 	return gh->makeCustomAction(ba);
 }
