@@ -111,6 +111,7 @@
 		<Unit filename="spells/effects/EffectFixture.cpp" />
 		<Unit filename="spells/effects/EffectFixture.h" />
 		<Unit filename="spells/effects/HealTest.cpp" />
+		<Unit filename="spells/effects/SacrificeTest.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

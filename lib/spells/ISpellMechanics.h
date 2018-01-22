@@ -205,7 +205,7 @@ public:
 	virtual std::vector<const CStack *> getAffectedStacks(BattleHex destination) const = 0;
 
 	virtual bool canBeCast(Problem & problem) const = 0;
-	virtual bool canBeCastAt(BattleHex destination) const = 0;
+	virtual bool canBeCastAt(const Target & target) const = 0;
 
 	virtual void applyEffects(BattleStateProxy * battleState, vstd::RNG & rng, const Target & targets, bool indirect, bool ignoreImmunity) const = 0;
 

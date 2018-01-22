@@ -25,7 +25,7 @@ public:
 	MOCK_CONST_METHOD1(getAffectedStacks, std::vector<const CStack *>(BattleHex));
 
 	MOCK_CONST_METHOD1(canBeCast, bool(Problem &));
-	MOCK_CONST_METHOD1(canBeCastAt, bool(BattleHex));
+	MOCK_CONST_METHOD1(canBeCastAt, bool(const Target & target));
 
 	MOCK_CONST_METHOD5(applyEffects, void(BattleStateProxy *, vstd::RNG &, const Target &, bool, bool));
 
